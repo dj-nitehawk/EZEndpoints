@@ -161,17 +161,11 @@ sealed class JobQueue<TCommand, TResult, TStorageRecord, TStorageProvider> : Job
             ExpireOn = expireOn ?? DateTime.UtcNow.AddHours(4)
         };
 
-        switch (command)
-        {
-            case IHasTrackingID cti:
-                cti.TrackingID = job.TrackingID;
+        if (command is IHasTrackingID cti)
+            cti.TrackingID = job.TrackingID;
 
-                break;
-            case IHasCommandType cct:
-                cct.CommandType = _tCommandName;
-
-                break;
-        }
+        if (command is IHasCommandType cct)
+            cct.CommandType = _tCommandName;
 
         job.SetCommand((TCommand)command);
 
